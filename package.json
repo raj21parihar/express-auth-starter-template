@@ -1,0 +1,29 @@
+{
+    "name": "express-auth-starter-template",
+    "version": "1.0.0",
+    "description": "A complete authentication system which can be used as a starter code for creating any new application.",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/raj21parihar/express-auth-starter-template.git"
+    },
+    "keywords": [
+        "Auth",
+        "Node Auth",
+        "authentication system"
+    ],
+    "author": "Parmanand Parihar",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/raj21parihar/express-auth-starter-template/issues"
+    },
+    "homepage": "https://github.com/raj21parihar/express-auth-starter-template#readme",
+    "dependencies": {
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2"
+    }
+}
