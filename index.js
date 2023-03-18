@@ -8,11 +8,8 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: false }));
+app.use('/', require('./routes'));
 app.use(express.static('assets'));
-
-app.get('/', (req, res) => {
-    res.render('index', {});
-});
 
 app.listen(process.env.PORT, (err) => {
     if (err) {
