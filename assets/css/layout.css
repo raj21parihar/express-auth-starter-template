@@ -1,0 +1,23 @@
+input {
+    background: transparent;
+    display: block;
+    width: 100%;
+    min-height: calc(1.6em + 1rem + 2px);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.3rem;
+    border: 1px solid #a59e9e !important;
+}
+.form-label {
+    background-color: #fff;
+    padding: 0 5px !important;
+    padding-top: 0px !important;
+    margin-top: 11px !important;
+}
+.divider:after,
+.divider:before {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}

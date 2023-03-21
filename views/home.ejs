@@ -1,14 +1,14 @@
 <div>
-    <% if(locals.user){ %>
-    <a href="/sign-out">Sign out</a>
-    <% } else {%>
-    <a href="/sign-in">Sign in</a>
-    <% } %>
-    <a href="/reset-password">Reset password</a>
-
-
-
-    <h3>Home</h3>
-    <p>Name : <%= locals.user.name %></p>
-    <p>Email : <%= locals.user.email %></p>
+    <h3 class="mb-5 mt-3">Home Page</h3>
+    <h5> <b>Name</b> : <%= locals.user.name %></h5>
+    <h5> <b>Email</b> : <%= locals.user.email %></h5>
+    <br>
+    <ul class="nav nav-pills nav-justified mt-5 mb-2">
+        <li class="nav-item">
+            <a style="font-size: 14px;" class="nav-link active" href="/reset-password">Reset Password</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-size: 14px;" class="nav-link active" href="/sign-out">Sign Out</a>
+        </li>
+    </ul>
 </div>

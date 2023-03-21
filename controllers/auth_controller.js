@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const authMailer = require('../mailers/auth_mailer');
 
 // to render the home page
 module.exports.home = function (req, res) {
@@ -81,6 +82,7 @@ module.exports.updatePassword = async function (req, res) {
         ).exec();
         if (updatedUser) {
             req.flash('success', 'Password updated.');
+            authMailer.updatePasswordEmail(user);
             return res.redirect('back');
         }
     } catch (err) {

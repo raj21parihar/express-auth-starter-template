@@ -1,4 +1,28 @@
-<div>
+<h3 class="mb-5">Sign in</h3>
+<form action="/create-session" method="post">
+    <div class="form-outline mb-4">
+        <input type="email" name="email" id="email" required placeholder="Email" />
+    </div>
+    <div class="form-outline mb-4">
+        <input type="password" name="password" id="password" required placeholder="Password" />
+    </div>
+    <button class="btn btn-primary btn-lg btn-block" type="submit" value="Sign in">Sign in</button>
+    <div class="divider d-flex align-items-center my-4">
+        <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
+    </div>
+    <a href="/auth/google" class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;">
+        <i class="fab fa-google me-2"></i> Sign in with google</a>
+    <br>
+    <div class="text-center pt-5 mb-3 pb-1">
+        <a class="text-muted" href="#!">Forgot password?</a>
+    </div>
+    <div class="d-flex align-items-center justify-content-center pb-2">
+        <p class="mb-0 me-2">Don't have an account?</p>
+        <a href="/sign-up" class="btn btn-outline-primary">Sign up</a>
+    </div>
+</form>
+
+<!-- <div>
     <h3>Sign in</h3>
     <form action="/create-session" method="post" id="demo-form">
         <input type="email" name="email" id="email" required placeholder="Email" value="rajat@gmail.com">
@@ -10,11 +34,4 @@
     </form>
     <a href="/sign-up">Sign up</a>
     <p><a href="/auth/google">Sign in with Google</a></p>
-</div>
-<script src="https://www.google.com/recaptcha/api.js"></script>
-
-<script>
-    function onSubmit(token) {
-        document.getElementById("demo-form").submit();
-    }
-</script>
+</div> -->
