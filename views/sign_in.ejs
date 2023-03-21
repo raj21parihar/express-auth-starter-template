@@ -1,17 +1,20 @@
-<html>
-
-<head>
-
-</head>
-
-<body>
+<div>
     <h3>Sign in</h3>
-    <form action="/create-session" method="post">
-        <input type="email" name="email" id="email" placeholder="Email">
-        <input type="password" name="password" id="password" placeholder="Password">
+    <form action="/create-session" method="post" id="demo-form">
+        <input type="email" name="email" id="email" required placeholder="Email" value="rajat@gmail.com">
+        <input type="password" name="password" id="password" required placeholder="Password" value="1">
+
+        <button class="g-recaptcha" data-sitekey="6LfZ_xklAAAAAJFIUh7GgOKTaLeYGTczjo0L6O6s" data-callback='onSubmit' data-action='submit'>Submit</button>
+
         <input type="submit" value="Sign in">
     </form>
     <a href="/sign-up">Sign up</a>
-</body>
+    <p><a href="/auth/google">Sign in with Google</a></p>
+</div>
+<script src="https://www.google.com/recaptcha/api.js"></script>
 
-</html>
+<script>
+    function onSubmit(token) {
+        document.getElementById("demo-form").submit();
+    }
+</script>

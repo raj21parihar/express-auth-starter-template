@@ -23,9 +23,17 @@
     },
     "homepage": "https://github.com/raj21parihar/express-auth-starter-template#readme",
     "dependencies": {
+        "connect-flash": "^0.1.1",
+        "connect-mongo": "^4.4.0-rc1",
+        "cookie-parser": "^1.4.6",
         "dotenv": "^16.0.3",
         "ejs": "^3.1.9",
         "express": "^4.18.2",
-        "mongoose": "^7.0.2"
+        "express-ejs-layouts": "^2.5.1",
+        "express-session": "^1.17.3",
+        "mongoose": "^7.0.2",
+        "passport": "^0.6.0",
+        "passport-google-oauth20": "^2.0.0",
+        "passport-local": "^1.0.0"
     }
 }

@@ -1,14 +1,14 @@
-<html>
-
-<head>
-
-</head>
-
-<body>
-    <h3>Home</h3>
-    <p>Name : </p>
-    <p>Email : </p>
+<div>
+    <% if(locals.user){ %>
     <a href="/sign-out">Sign out</a>
-</body>
+    <% } else {%>
+    <a href="/sign-in">Sign in</a>
+    <% } %>
+    <a href="/reset-password">Reset password</a>
 
-</html>
+
+
+    <h3>Home</h3>
+    <p>Name : <%= locals.user.name %></p>
+    <p>Email : <%= locals.user.email %></p>
+</div>
