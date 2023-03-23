@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Token = require('../models/token');
 const authMailer = require('../mailers/auth_mailer');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 
 // to render the home page
 module.exports.home = function (req, res) {
@@ -39,6 +40,9 @@ module.exports.createUser = async function (req, res) {
             req.flash('error', 'Email already exist.');
             return res.redirect('back');
         }
+
+        //hashing password before saving
+        req.body.password = await bcrypt.hash(req.body.password, 10);
 
         //create new user and redirect to sign in page
         let newUser = await User.create(req.body);
@@ -80,7 +84,12 @@ module.exports.updatePassword = async function (req, res) {
         let user = await User.findOne({ _id: req.user.id })
             .select('+password')
             .exec();
-        if (user.password != req.body.current_password) {
+
+        let macthPasswrrd = await bcrypt.compare(
+            req.body.current_password,
+            user.password
+        );
+        if (!macthPasswrrd) {
             req.flash('error', 'Invalid password.');
             return res.redirect('back');
         }

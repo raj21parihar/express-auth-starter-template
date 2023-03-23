@@ -23,6 +23,7 @@
     },
     "homepage": "https://github.com/raj21parihar/express-auth-starter-template#readme",
     "dependencies": {
+        "bcrypt": "^5.1.0",
         "connect-flash": "^0.1.1",
         "connect-mongo": "^4.4.0-rc1",
         "cookie-parser": "^1.4.6",
