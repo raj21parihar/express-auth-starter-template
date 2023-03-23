@@ -6,6 +6,7 @@ const passport = require('passport');
 router.get('/', passport.checkAuthentication, authController.home);
 router.get('/sign-in', authController.signin);
 router.get('/sign-up', authController.signup);
+
 router.post('/create-user', authController.createUser);
 router.post(
     '/create-session',
@@ -14,9 +15,9 @@ router.post(
 );
 router.get('/sign-out', authController.destroySession);
 router.get(
-    '/reset-password',
+    '/change-password',
     passport.checkAuthentication,
-    authController.resetPassword
+    authController.changePassword
 );
 router.post(
     '/update-password',
@@ -34,5 +35,10 @@ router.get(
     passport.authenticate('google', { failureRedirect: '/sign-in' }),
     authController.createSession
 );
+
+router.get('/forgot-password', authController.forgotPassword);
+router.post('/send-reset-link', authController.sendPasswordResetLink);
+router.get('/reset-password', authController.resetPassword);
+router.post('/set-new-password', authController.verifyAndSetNewPassword);
 
 module.exports = router;

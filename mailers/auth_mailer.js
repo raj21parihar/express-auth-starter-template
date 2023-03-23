@@ -1,20 +1,43 @@
 const nodeMailer = require('../config/nodemailer');
 require('dotenv').config();
 
-exports.updatePasswordEmail = (user) => {
-    console.log('password update mail.');
+exports.passwordChangeAlertMail = (user) => {
+    let mailContent = nodeMailer.renderTemplate(
+        { user: user },
+        '/auth/password_change_alert.ejs'
+    );
     nodeMailer.transporter.sendMail(
         {
             from: process.env.SMTP_USER,
-            to: 'raj21parihar@gmail.com',
-            subject: 'Password change alert.',
-            html: '<h2> Your acount password has been changed</h2>',
+            to: user.email,
+            subject: 'Password Change Alert',
+            html: mailContent,
         },
         function (err, info) {
             if (err) {
                 console.log('Error : ', err);
             }
-            console.log('Email sent.');
+            return;
+        }
+    );
+};
+
+exports.passwordResetLinkMail = (user) => {
+    let mailContent = nodeMailer.renderTemplate(
+        { user: user },
+        '/auth/password_reset_link.ejs'
+    );
+    nodeMailer.transporter.sendMail(
+        {
+            from: process.env.SMTP_USER,
+            to: user.email,
+            subject: 'Password Reset Request',
+            html: mailContent,
+        },
+        function (err, info) {
+            if (err) {
+                console.log('Error : ', err);
+            }
             return;
         }
     );
