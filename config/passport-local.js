@@ -1,3 +1,4 @@
+// Importing required modules
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
@@ -5,33 +6,34 @@ const bcrypt = require('bcrypt');
 var validator = require('validator');
 var axios = require('axios');
 
-//auth using passport
+// Authentication using passport
 passport.use(
-    'local',
+    'local', // strategy name
     new localStrategy(
         {
-            usernameField: 'email',
-            passReqToCallback: true,
+            usernameField: 'email', // username field name
+            passReqToCallback: true, // allows access to request object in callback function
         },
         async function (req, email, password, done) {
+            // passport authentication callback function
             try {
                 if (!validator.isEmail(email)) {
-                    req.flash('error', 'Invalid email. ');
-                    return done(null, false);
+                    // validate email using validator module
+                    req.flash('error', 'Invalid email. '); // flash error message
+                    return done(null, false); // return authentication failure
                 }
 
-                //verify reCaptcha - start ---
+                // Verify reCaptcha - start ---
                 let captchaURL =
                     'https://www.google.com/recaptcha/api/siteverify?secret=' +
                     process.env.RECAPTCHA_VERIFICATION_SEC_KEY +
                     '&response=' +
                     req.body['g-recaptcha-response'] +
                     '&remoteip=' +
-                    req.connection.remoteAddress;
+                    req.connection.remoteAddress; // reCaptcha verification URL
+                let isCaptchaVerified = await axios.post(captchaURL); // make a POST request to the reCaptcha verification URL
 
-                let isCaptchaVerified = await axios.post(captchaURL);
-
-                //if reCaptch verification failed return and exit.
+                // If reCaptcha verification failed, flash error message and redirect
                 if (!isCaptchaVerified.data.success) {
                     req.flash(
                         'error',
@@ -39,33 +41,37 @@ passport.use(
                     );
                     return res.redirect('back');
                 }
+                // Verify reCaptcha - end ---
 
-                //verify reCaptcha - end ---
-
+                // Find user in database by email
                 let user = await User.findOne({
                     email: email,
                 })
-                    .select('+password')
+                    .select('+password') // explicitly select password field for comparison
                     .exec();
 
+                // If user not found, flash error message and return authentication failure
                 if (!user) {
                     req.flash('error', 'Invalid Username or Password!');
                     return done(null, false);
                 }
 
+                // Compare password with hashed password in database
                 let matchPassword = await bcrypt.compare(
                     password,
                     user.password
                 );
                 if (!matchPassword) {
+                    // If password doesn't match, flash error message and return authentication failure
                     req.flash('error', 'Invalid Username or Password!');
                     return done(null, false);
                 }
 
+                // Return authentication success with user object
                 return done(null, user);
             } catch (err) {
-                console.log('Error in passport : ', err);
-                return done(err);
+                console.log('Error in passport : ', err); // Log error
+                return done(err); // Return authentication failure with error object
             }
         }
     )

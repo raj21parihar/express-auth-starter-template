@@ -3,10 +3,6 @@
     "version": "1.0.0",
     "description": "A complete authentication system which can be used as a starter code for creating any new application.",
     "main": "index.js",
-    "scripts": {
-        "start": "nodemon index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/raj21parihar/express-auth-starter-template.git"
@@ -14,6 +10,7 @@
     "keywords": [
         "Auth",
         "Node Auth",
+        "Express Auth",
         "authentication system"
     ],
     "author": "Parmanand Parihar",
@@ -33,14 +30,12 @@
         "express": "^4.18.2",
         "express-ejs-layouts": "^2.5.1",
         "express-session": "^1.17.3",
-        "express-validator": "^6.15.0",
+        "kue": "^0.11.6",
         "mongoose": "^7.0.2",
         "nodemailer": "^6.9.1",
         "passport": "^0.6.0",
         "passport-google-oauth20": "^2.0.0",
         "passport-local": "^1.0.0",
-        "request": "^2.88.2",
-        "validator": "^13.9.0",
-        "validatorjs": "^3.22.1"
+        "validator": "^13.9.0"
     }
 }

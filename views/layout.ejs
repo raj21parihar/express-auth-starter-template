@@ -1,18 +1,33 @@
+<!-- An HTML file that serves as the template for the Express authentication starter kit -->
+<!-- Contains links to various CSS and JavaScript libraries -->
+<!-- Uses EJS templating language to insert dynamic content -->
+<!-- Uses Bootstrap and Material Design Bootstrap for layout and styling -->
+<!-- Displays success and error messages using the Noty library -->
 <html>
 
 <head>
     <title>
         Express Auth Starter Template
     </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.1/noty.min.css" integrity="sha512-leQJisLD6lgz70MzHnVgZCwklwq2xcNB1+lIZIaw17o5vNJ7nBVK7w/TqCE5cKg4nDjiLcN/g2Lu0uA4rc5fAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.1/noty.min.js" integrity="sha512-Wz8/IQIW2Hhz+0jQQdRlx8qTo7Qf286+yFGaW3nIQAynq7iOlmkhrKWQFOoLXOp7u5E2Tdda0dx9TyjhUD6jQg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Links to CSS files for Font Awesome, Roboto font, and Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Links to CSS files for Noty -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.1/noty.min.css" integrity="sha512-leQJisLD6lgz70MzHnVgZCwklwq2xcNB1+lIZIaw17o5vNJ7nBVK7w/TqCE5cKg4nDjiLcN/g2Lu0uA4rc5fAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Link to custom CSS file for layout -->
     <link rel="stylesheet" href="/css/layout.css">
+
+    <!-- Links to JavaScript files for jQuery and Noty -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.1/noty.min.js" integrity="sha512-Wz8/IQIW2Hhz+0jQQdRlx8qTo7Qf286+yFGaW3nIQAynq7iOlmkhrKWQFOoLXOp7u5E2Tdda0dx9TyjhUD6jQg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Links to JavaScript files for Material Design Bootstrap -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <!-- Insert dynamic CSS -->
     <%- style %>
 </head>
 

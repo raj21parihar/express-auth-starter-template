@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
 
-//define transporter
+// define the transporter object for sending emails using nodemailer
 let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: 465,
@@ -13,9 +13,10 @@ let transporter = nodemailer.createTransport({
     },
 });
 
-//define template rendring setup
+// function for rendering ejs templates
 let renderTemplate = function (data, relativePath) {
     let mailHTML;
+    // use ejs to render the ejs template located at the given path using the provided data object
     ejs.renderFile(
         path.join(__dirname, '../views/mailers', relativePath),
         data,
@@ -24,12 +25,15 @@ let renderTemplate = function (data, relativePath) {
                 console.log('Error : ', err);
                 return;
             }
+            // set the mailHTML variable to the rendered ejs template
             mailHTML = template;
         }
     );
+    // return the rendered ejs template as a string
     return mailHTML;
 };
 
+// export the transporter and renderTemplate functions for use in other modules
 module.exports = {
     transporter: transporter,
     renderTemplate: renderTemplate,

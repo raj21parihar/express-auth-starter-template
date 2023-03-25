@@ -1,3 +1,4 @@
+// Importing required modules and models
 const User = require('../models/user');
 const Token = require('../models/token');
 const authMailer = require('../mailers/auth_mailer');
@@ -6,12 +7,12 @@ const bcrypt = require('bcrypt');
 var validator = require('validator');
 var axios = require('axios');
 
-// to render the home page
+// Rendering the home page
 module.exports.home = function (req, res) {
     return res.render('home');
 };
 
-// to render the sign-in page, if already logged in goto home page
+// Rendering the sign-in page, if already logged in go to home page
 module.exports.signin = function (req, res) {
     if (req.isAuthenticated()) {
         return res.redirect('/');
@@ -19,7 +20,7 @@ module.exports.signin = function (req, res) {
     return res.render('sign_in', { site_key: process.env.RECAPTCHA_SITE_KEY });
 };
 
-// to render the sign-up page, if already logged in goto home page
+// Rendering the sign-up page, if already logged in go to home page
 module.exports.signup = function (req, res) {
     if (req.isAuthenticated()) {
         return res.redirect('/');
@@ -27,77 +28,82 @@ module.exports.signup = function (req, res) {
     return res.render('sign_up', { site_key: process.env.RECAPTCHA_SITE_KEY });
 };
 
-// Create a new user from signup page
+// Create and export createUser function
 module.exports.createUser = async function (req, res) {
     try {
+        // Validate the inputs provided (email, name, password)
+        const {
+            email,
+            name,
+            password,
+            confirm_password,
+            'g-recaptcha-response': recaptchaResponse,
+        } = req.body;
         let errorMsg = '';
-        if (!validator.isEmail(req.body.email)) {
+        if (!validator.isEmail(email)) {
             errorMsg += 'Invalid email. ';
         }
-
-        if (validator.isEmpty(req.body.name)) {
+        if (validator.isEmpty(name)) {
             errorMsg += 'Name is required. ';
         }
-
         if (
-            validator.isEmpty(req.body.password) ||
-            validator.isEmpty(req.body.confirm_password)
+            validator.isEmpty(password) ||
+            validator.isEmpty(confirm_password)
         ) {
             errorMsg += 'Password is required. ';
         }
-
-        if (req.body.password != req.body.confirm_password) {
-            errorMsg += 'Password is required. ';
+        if (password !== confirm_password) {
+            errorMsg += 'Confirm password should be same as password. ';
         }
-
         if (errorMsg) {
             req.flash('error', errorMsg);
             return res.redirect('back');
         }
 
-        //verify reCaptcha - start ---
-        let captchaURL =
-            'https://www.google.com/recaptcha/api/siteverify?secret=' +
-            process.env.RECAPTCHA_VERIFICATION_SEC_KEY +
-            '&response=' +
-            req.body['g-recaptcha-response'] +
-            '&remoteip=' +
-            req.connection.remoteAddress;
+        // Verify reCaptcha
+        const captchaURL = `https://www.google.com/recaptcha/api/siteverify?
+            secret=${process.env.RECAPTCHA_VERIFICATION_SEC_KEY}&
+            response=${recaptchaResponse}&
+            remoteip=${req.connection.remoteAddress}`;
+        const {
+            data: { success: isCaptchaVerified },
+        } = await axios.post(captchaURL);
 
-        let isCaptchaVerified = await axios.post(captchaURL);
-        //verify reCaptcha - end ---
-
-        //if reCaptch verification failed return and exit.
-        if (!isCaptchaVerified.data.success) {
+        // If reCaptcha verification failed, return and exit
+        if (!isCaptchaVerified) {
             req.flash(
                 'error',
-                'Captcha verification failed, please try again after sometime.'
+                'Captcha verification failed, please try again after some time.'
             );
             return res.redirect('back');
         }
 
-        //check if user alrady exist
-        let user = await User.findOne({ email: req.body.email }).exec();
-        if (user) {
-            req.flash('error', 'Email already exist.');
+        // Check if user already exists
+        const existingUser = await User.findOne({ email }).exec();
+        if (existingUser) {
+            req.flash('error', 'Email already exists.');
             return res.redirect('back');
         }
 
-        //hashing password before saving
-        req.body.password = await bcrypt.hash(req.body.password, 10);
+        // Hash the password before saving
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        //create new user and redirect to sign in page
-        let newUser = await User.create(req.body);
+        // Create new user and redirect to sign in page
+        await User.create({
+            email,
+            name,
+            password: hashedPassword,
+        });
         req.flash('success', 'User created.');
         res.redirect('/sign-in');
     } catch (err) {
-        console.log('Error : ', err);
+        console.log('Error:', err);
         req.flash('error', 'Error while signing up, please try again.');
         return res.redirect('back');
     }
 };
 
-// to get the user crdentials and create user session
+// Getting the user credentials and creating user session
 module.exports.createSession = function (req, res) {
     req.flash('success', 'Signed in successfully.');
     return res.redirect('/');
@@ -114,12 +120,14 @@ module.exports.destroySession = function (req, res, next) {
     });
 };
 
+//to render the chaange password
 module.exports.changePassword = function (req, res) {
     return res.render('change_password', {
         site_key: process.env.RECAPTCHA_SITE_KEY,
     });
 };
 
+//to update the password once user provide the current and new password
 module.exports.updatePassword = async function (req, res) {
     try {
         if (req.body.new_password != req.body.confirm_new_password) {
@@ -203,7 +211,6 @@ module.exports.sendPasswordResetLink = async function (req, res) {
         }
 
         let user = await User.findOne({ email: req.body.email }).exec();
-        console.log(user);
         if (user) {
             let token = await Token.findOne({ userId: user._id });
             if (token) await token.deleteOne();
@@ -219,7 +226,8 @@ module.exports.sendPasswordResetLink = async function (req, res) {
                 'success',
                 'An email has been sent to mailbox. please follow the instructions to reset your password.'
             );
-            // authMailer.passwordResetLinkMail(user);
+            authMailer.passwordResetLinkMail(user);
+            console.log(user.resetLink);
         } else {
             req.flash(
                 'error',
@@ -253,14 +261,19 @@ module.exports.resetPassword = async function (req, res) {
     }
 };
 
+// This function is used to verify and set the new password for a user based on the reset token they received.
 module.exports.verifyAndSetNewPassword = async function (req, res) {
     try {
-        //id capcha is valid then validate the password reset token and change password
-        let isTokenValid = await Token.findOne({
-            user: req.body.id,
-            token: req.body.key,
+        // Extracting the required data from request body.
+        const { id, key, new_password, confirm_new_password } = req.body;
+
+        // Finding if the reset token is valid and belongs to the user.
+        const isTokenValid = await Token.findOne({
+            user: id,
+            token: key,
         }).exec();
 
+        // If token is not valid, displaying an error message and redirecting to the previous page.
         if (!isTokenValid) {
             req.flash(
                 'error',
@@ -269,23 +282,34 @@ module.exports.verifyAndSetNewPassword = async function (req, res) {
             return res.redirect('back');
         }
 
-        if (req.body.new_password != req.body.confirm_new_password) {
+        // Checking if new password and confirm password fields match.
+        if (new_password !== confirm_new_password) {
             req.flash('error', 'Confirm password should be same.');
             return res.redirect('back');
         }
 
-        let updatedUser = await User.findOneAndUpdate(
-            { _id: req.body.id },
-            { password: req.body.new_password }
+        // Hashing password before saving
+        let newPasswordHash = await bcrypt.hash(new_password, 10);
+
+        // Updating the user's password in the database.
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: id },
+            { password: newPasswordHash }
         ).exec();
 
+        // Deleting the reset token from the database as it is not required anymore.
         await Token.findByIdAndDelete(isTokenValid._id);
-        let user = await User.findById(req.body.id);
+
+        // Sending email to the user to notify them of password change.
+        const user = await User.findById(id);
         req.flash('success', 'Password updated.');
-        authMailer.passwordChangeAlertMail(user);
+
+        //authMailer.passwordChangeAlertMail(user);
+
+        // Redirecting the user to the login page.
         return res.redirect('/sign-in');
     } catch (err) {
+        // Displaying error in console if there is any error while performing the above operations.
         console.log('Error : ', err);
     }
-    return res.redirect('/sign-in');
 };
