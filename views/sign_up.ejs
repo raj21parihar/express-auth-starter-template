@@ -1,5 +1,5 @@
 <h3 class="mb-5">Sign up</h3>
-<form action="/create-user" method="post">
+<form action="/create-user" id="create-user-form" method="post">
     <div class="form-outline mb-4">
         <input type="text" name="name" id="name" required placeholder="Name" />
     </div>
@@ -12,9 +12,7 @@
     <div class="form-outline mb-4">
         <input type="password" name="confirm_password" id="confirm_password" required placeholder="Confirm password" />
     </div>
-
-
-    <button class="btn btn-primary btn-lg btn-block" type="submit" value="Sign up">Sign up</button>
+    <button class="g-recaptcha btn btn-primary btn-lg btn-block" value="Sign up" data-sitekey="6Ldg-ColAAAAAPep4AL0bAy5cF0FAhJ8rEtXjUVx" data-callback='onSubmit' data-action='submit'>Sign up</button>
     <div class="divider d-flex align-items-center my-4">
         <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
     </div>
@@ -26,3 +24,12 @@
         <a href="/sign-in" class="btn btn-outline-primary">Sign in</a>
     </div>
 </form>
+
+
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function onSubmit(token) {
+        document.getElementById("create-user-form").submit();
+    }
+</script>

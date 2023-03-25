@@ -1,12 +1,13 @@
 <h3 class="mb-5">Sign in</h3>
-<form action="/create-session" method="post">
+<form action="/create-session" id="create-sesion-form" method="post">
     <div class="form-outline mb-4">
         <input type="email" name="email" id="email" required placeholder="Email" />
     </div>
     <div class="form-outline mb-4">
         <input type="password" name="password" id="password" required placeholder="Password" />
     </div>
-    <button class="btn btn-primary btn-lg btn-block" type="submit" value="Sign in">Sign in</button>
+    <button class="g-recaptcha btn btn btn-primary btn-lg btn-block" value="Sign in" data-sitekey="<%= locals.site_key %>" data-callback='onSubmit' data-action='submit'>Sign in</button>
+
     <div class="divider d-flex align-items-center my-4">
         <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
     </div>
@@ -21,3 +22,11 @@
         <a href="/sign-up" class="btn btn-outline-primary">Sign up</a>
     </div>
 </form>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function onSubmit(token) {
+        let cs_form = document.getElementById("create-sesion-form");
+        cs_form.submit();
+    }
+</script>

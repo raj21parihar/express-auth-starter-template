@@ -3,6 +3,8 @@ const Token = require('../models/token');
 const authMailer = require('../mailers/auth_mailer');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+var validator = require('validator');
+var axios = require('axios');
 
 // to render the home page
 module.exports.home = function (req, res) {
@@ -14,7 +16,7 @@ module.exports.signin = function (req, res) {
     if (req.isAuthenticated()) {
         return res.redirect('/');
     }
-    return res.render('sign_in');
+    return res.render('sign_in', { site_key: process.env.RECAPTCHA_SITE_KEY });
 };
 
 // to render the sign-up page, if already logged in goto home page
@@ -22,15 +24,55 @@ module.exports.signup = function (req, res) {
     if (req.isAuthenticated()) {
         return res.redirect('/');
     }
-    return res.render('sign_up');
+    return res.render('sign_up', { site_key: process.env.RECAPTCHA_SITE_KEY });
 };
 
 // Create a new user from signup page
 module.exports.createUser = async function (req, res) {
     try {
-        //check if password and confirm password not same
+        let errorMsg = '';
+        if (!validator.isEmail(req.body.email)) {
+            errorMsg += 'Invalid email. ';
+        }
+
+        if (validator.isEmpty(req.body.name)) {
+            errorMsg += 'Name is required. ';
+        }
+
+        if (
+            validator.isEmpty(req.body.password) ||
+            validator.isEmpty(req.body.confirm_password)
+        ) {
+            errorMsg += 'Password is required. ';
+        }
+
         if (req.body.password != req.body.confirm_password) {
-            req.flash('error', 'Password not matching.');
+            errorMsg += 'Password is required. ';
+        }
+
+        if (errorMsg) {
+            req.flash('error', errorMsg);
+            return res.redirect('back');
+        }
+
+        //verify reCaptcha - start ---
+        let captchaURL =
+            'https://www.google.com/recaptcha/api/siteverify?secret=' +
+            process.env.RECAPTCHA_VERIFICATION_SEC_KEY +
+            '&response=' +
+            req.body['g-recaptcha-response'] +
+            '&remoteip=' +
+            req.connection.remoteAddress;
+
+        let isCaptchaVerified = await axios.post(captchaURL);
+        //verify reCaptcha - end ---
+
+        //if reCaptch verification failed return and exit.
+        if (!isCaptchaVerified.data.success) {
+            req.flash(
+                'error',
+                'Captcha verification failed, please try again after sometime.'
+            );
             return res.redirect('back');
         }
 
@@ -50,6 +92,7 @@ module.exports.createUser = async function (req, res) {
         res.redirect('/sign-in');
     } catch (err) {
         console.log('Error : ', err);
+        req.flash('error', 'Error while signing up, please try again.');
         return res.redirect('back');
     }
 };
@@ -72,7 +115,9 @@ module.exports.destroySession = function (req, res, next) {
 };
 
 module.exports.changePassword = function (req, res) {
-    return res.render('change_password');
+    return res.render('change_password', {
+        site_key: process.env.RECAPTCHA_SITE_KEY,
+    });
 };
 
 module.exports.updatePassword = async function (req, res) {
@@ -120,13 +165,49 @@ module.exports.sendPasswordResetLink = async function (req, res) {
         return res.redirect('/');
     }
     try {
+        let validationError = '';
+        if (!validator.isEmail(req.body.email)) {
+            validationError = validationError + 'Invalid email. ';
+        }
+
+        if (!req.body['g-recaptcha-response']) {
+            validationError = validationError + 'Invalid captcha. ';
+        }
+
+        console.log(req.body.email, validationError);
+        if (!!validationError) {
+            req.flash('error', validationError);
+            return res.redirect('back');
+        }
+
+        //verify reCaptcha - start ---
+        let captchaURL =
+            'https://www.google.com/recaptcha/api/siteverify?secret=' +
+            process.env.RECAPTCHA_VERIFICATION_SEC_KEY +
+            '&response=' +
+            req.body['g-recaptcha-response'] +
+            '&remoteip=' +
+            req.connection.remoteAddress;
+
+        let isCaptchaVerified = await axios.post(captchaURL);
+
+        //verify reCaptcha - end ---
+
+        //if reCaptch verification failed return and exit.
+        if (!isCaptchaVerified.data.success) {
+            req.flash(
+                'error',
+                'Captcha verification failed, please try again after sometime.'
+            );
+            return res.redirect('back');
+        }
+
         let user = await User.findOne({ email: req.body.email }).exec();
         console.log(user);
         if (user) {
             let token = await Token.findOne({ userId: user._id });
             if (token) await token.deleteOne();
             let resetToken = crypto.randomBytes(32).toString('hex');
-            //const hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
             await new Token({
                 user: user._id,
                 token: resetToken,
@@ -138,7 +219,7 @@ module.exports.sendPasswordResetLink = async function (req, res) {
                 'success',
                 'An email has been sent to mailbox. please follow the instructions to reset your password.'
             );
-            authMailer.passwordResetLinkMail(user);
+            // authMailer.passwordResetLinkMail(user);
         } else {
             req.flash(
                 'error',
@@ -174,6 +255,7 @@ module.exports.resetPassword = async function (req, res) {
 
 module.exports.verifyAndSetNewPassword = async function (req, res) {
     try {
+        //id capcha is valid then validate the password reset token and change password
         let isTokenValid = await Token.findOne({
             user: req.body.id,
             token: req.body.key,
@@ -196,6 +278,7 @@ module.exports.verifyAndSetNewPassword = async function (req, res) {
             { _id: req.body.id },
             { password: req.body.new_password }
         ).exec();
+
         await Token.findByIdAndDelete(isTokenValid._id);
         let user = await User.findById(req.body.id);
         req.flash('success', 'Password updated.');
