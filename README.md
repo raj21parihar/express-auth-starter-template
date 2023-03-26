@@ -2,6 +2,7 @@
 
 This is a complete authentication system that can be used as a starter code for creating any new express application. It includes sign up, sign in, sign out, reset password, and social authentication using Google. Additionally, it also includes a bonus feature of forgot password functionality.
 The code is well-commented for easy understanding and scalability. The folder structure is separate for models, controllers, and routes, making it easy to scale the project.
+This code can serve as a boilerplate for any Express application that requires a basic authentication module.
 
 ## Table of Contents
 
