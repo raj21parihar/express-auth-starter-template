@@ -182,7 +182,6 @@ module.exports.sendPasswordResetLink = async function (req, res) {
             validationError = validationError + 'Invalid captcha. ';
         }
 
-        console.log(req.body.email, validationError);
         if (!!validationError) {
             req.flash('error', validationError);
             return res.redirect('back');
@@ -304,7 +303,7 @@ module.exports.verifyAndSetNewPassword = async function (req, res) {
         const user = await User.findById(id);
         req.flash('success', 'Password updated.');
 
-        //authMailer.passwordChangeAlertMail(user);
+        authMailer.passwordChangeAlertMail(user);
 
         // Redirecting the user to the login page.
         return res.redirect('/sign-in');

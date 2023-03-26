@@ -12,6 +12,7 @@ exports.passwordChangeAlertMail = (user) => {
     // Send the email using nodemailer's transporter object, including the email content and necessary details
     nodeMailer.transporter.sendMail(
         {
+            name: 'Express Auth Admin',
             from: process.env.SMTP_USER,
             to: user.email,
             subject: 'Password Change Alert',
