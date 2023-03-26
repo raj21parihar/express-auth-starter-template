@@ -226,7 +226,6 @@ module.exports.sendPasswordResetLink = async function (req, res) {
                 'An email has been sent to mailbox. please follow the instructions to reset your password.'
             );
             authMailer.passwordResetLinkMail(user);
-            console.log(user.resetLink);
         } else {
             req.flash(
                 'error',
